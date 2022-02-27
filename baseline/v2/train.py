@@ -287,7 +287,8 @@ if __name__ == '__main__':
     wandb.config.update(args)
 
     dt_string = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    wandb.run.name = f"HYUNJI-{args.model}-{args.epochs}-{args.batch_size}-{dt_string}"
+    USER_NAME = 'Hyunji'  # add user name
+    wandb.run.name = f"{USER_NAME}-{args.model}-{args.epochs}-{args.batch_size}-{dt_string}"  # set run format
     wandb.run.save()
     # ----- wandb add end -----
 
