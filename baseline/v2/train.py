@@ -282,7 +282,7 @@ if __name__ == '__main__':
     #----- wandb add start -----
     wandb.init(
         project='mask-classification',
-        entity='tb2715',
+        entity='team-oeanhdoejo',
     )
     wandb.config.update(args)
 
