@@ -108,7 +108,7 @@ class AgeLabels(int, Enum):
 
 
 class MaskBaseDataset(Dataset):
-    num_classes = 3 * 2 * 3
+    # num_classes = 3 * 2 * 3
 
     _file_names = {
         "mask1": MaskLabels.MASK,
@@ -125,16 +125,23 @@ class MaskBaseDataset(Dataset):
     gender_labels = []
     age_labels = []
 
-    def __init__(self, data_dir, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), val_ratio=0.2):
+    def __init__(self, data_dir, task = 'multiclass', mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), val_ratio=0.2):
+        if task == 'multiclass':
+            self.num_classes = 3 * 2 * 3
+        elif task == 'mask' or task == 'age':
+            self.num_classes = 3
+        else:
+            self.num_classes = 2
         self.data_dir = data_dir
         self.mean = mean
         self.std = std
         self.val_ratio = val_ratio
+        self.task = task
 
         self.transform = None
         self.setup()
         self.calc_statistics()
-        label_info = pd.read_csv('/opt/ml/code/train_info.csv')
+        label_info = pd.read_csv('/opt/ml/code/train_labels.csv')
         self.multiclass_labels = label_info['label'].to_frame()
 
 
@@ -190,7 +197,14 @@ class MaskBaseDataset(Dataset):
         multi_class_label = self.encode_multi_class(mask_label, gender_label, age_label)
 
         image_transform = self.transform(image)
-        return image_transform, multi_class_label
+        if self.task == 'multiclass':
+            return image_transform, multi_class_label
+        elif self.task == 'mask':
+            return image_transform, mask_label
+        elif self.task == 'gender':
+            return image_transform, gender_label
+        else:
+            return image_transform, age_label
 
     def __len__(self):
         return len(self.image_paths)
@@ -249,9 +263,9 @@ class MaskSplitByProfileDataset(MaskBaseDataset):
         이후 `split_dataset` 에서 index 에 맞게 Subset 으로 dataset 을 분기합니다.
     """
 
-    def __init__(self, data_dir, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), val_ratio=0.2):
+    def __init__(self, data_dir, task, mean=(0.548, 0.504, 0.479), std=(0.237, 0.247, 0.246), val_ratio=0.2):
         self.indices = defaultdict(list)
-        super().__init__(data_dir, mean, std, val_ratio)
+        super().__init__(data_dir, task, mean, std, val_ratio)
 
     @staticmethod
     def _split_profile(profiles, val_ratio):
@@ -296,16 +310,27 @@ class MaskSplitByProfileDataset(MaskBaseDataset):
                     cnt += 1
 
     def split_dataset(self) -> List[Subset]:
-        train_set, val_set = [Subset(self, indices) for phase, indices in self.indices.items()]
+        return [Subset(self, indices) for phase, indices in self.indices.items()]
+    
+    def get_samples_weight(self):
         subset_idx = self.indices['train']
-        target = self.multiclass_labels.iloc[subset_idx]
-        target = target['label'].tolist()
+
+        if self.task == 'multiclass':
+            target = self.multiclass_labels.iloc[subset_idx]
+            target = target['label'].tolist()
+        elif self.task == 'mask':
+            target = [self.mask_labels[i] for i in subset_idx]
+        elif self.task == 'gender':
+            target = [self.gender_labels[i] for i in subset_idx]
+        else:
+            target = [self.age_labels[i] for i in subset_idx]
+        
         subset_idx, target = torch.tensor(subset_idx), torch.tensor(target)
         class_sample_count = torch.tensor(
             [(target[subset_idx] == t).sum() for t in torch.unique(target, sorted=True)])
         weight = 1. / class_sample_count.float()
         samples_weight = torch.tensor([weight[t] for t in target[subset_idx]])
-        return train_set, val_set, samples_weight
+        return samples_weight
 
 
 class TestDataset(Dataset):

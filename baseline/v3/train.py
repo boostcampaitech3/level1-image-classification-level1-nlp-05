@@ -7,7 +7,6 @@ import random
 import re
 from importlib import import_module
 from pathlib import Path
-import pandas as pd
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -100,10 +99,9 @@ def train(data_dir, model_dir, args):
     # -- dataset
     dataset_module = getattr(import_module("dataset"), args.dataset)  # default: BaseAugmentation
     dataset = dataset_module(
-        data_dir=data_dir,
+        data_dir=data_dir, task = args.task
     )
-    num_classes = dataset.num_classes  # 18
-    multiclass_labels = dataset.multiclass_labels
+    num_classes = dataset.num_classes  # task에 따라 달라짐
 
     # -- augmentation
     transform_module = getattr(import_module("dataset"), args.augmentation)  # default: BaseAugmentation
@@ -115,18 +113,28 @@ def train(data_dir, model_dir, args):
     dataset.set_transform(transform)
 
     # -- data_loader
-    train_set, val_set, samples_weight = dataset.split_dataset()
-    sampler = WeightedRandomSampler(samples_weight, len(samples_weight))
-    
-    train_loader = DataLoader(
+    train_set, val_set = dataset.split_dataset()
+
+    if args.dataset != 'BaseAugmentation':
+        samples_weight = dataset.get_samples_weight()
+        sampler = WeightedRandomSampler(samples_weight, len(samples_weight))
+        train_loader = DataLoader(
         train_set,
         batch_size=args.batch_size,
         num_workers=multiprocessing.cpu_count()//2,
         # shuffle=True,
         pin_memory=use_cuda,
         drop_last=True,
-        sampler = sampler
-    )
+        sampler = sampler)
+    else:
+        train_loader = DataLoader(
+        train_set,
+        batch_size=args.batch_size,
+        num_workers=multiprocessing.cpu_count()//2,
+        # shuffle=True,
+        pin_memory=use_cuda,
+        drop_last=True,
+        sampler = sampler)
 
     val_loader = DataLoader(
         val_set,
@@ -135,7 +143,6 @@ def train(data_dir, model_dir, args):
         shuffle=False,
         pin_memory=use_cuda,
         drop_last=True,
-        # sampler = sampler
     )
     print('data loaded')
 
@@ -260,6 +267,7 @@ if __name__ == '__main__':
     load_dotenv(verbose=True)
 
     # Data and model checkpoints directories
+    parser.add_argument('--task', type=str, default='multiclass', help='choose 1 task in (multiclass, mask, gender, age)')
     parser.add_argument('--seed', type=int, default=42, help='random seed (default: 42)')
     parser.add_argument('--epochs', type=int, default=1, help='number of epochs to train (default: 1)')
     parser.add_argument('--dataset', type=str, default='MaskBaseDataset', help='dataset augmentation type (default: MaskBaseDataset)')
