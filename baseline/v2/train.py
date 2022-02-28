@@ -36,7 +36,7 @@ def get_lr(optimizer):
         return param_group['lr']
 
 
-def grid_image(np_images, gts, preds, n=16, shuffle=False):
+def grid_image(np_images, gts, preds, test_table, n=16, shuffle=False): # wandb: test_table add 
     batch_size = np_images.shape[0]
     assert n <= batch_size
 
@@ -63,8 +63,53 @@ def grid_image(np_images, gts, preds, n=16, shuffle=False):
         plt.grid(False)
         plt.imshow(image, cmap=plt.cm.binary)
 
-        images_list.append(image)
-        titles.append(title)
+        # ---- wandb table add start -----
+        mask_id2label = {
+            0: 'MASK',
+            1: 'INCORRECT',
+            2: 'NORMAL'
+        }
+        gender_id2label = {
+            0: 'MALE',
+            1: 'FEMALE'
+        }
+        age_id2label = {
+            0: 'YOUNG',
+            1: 'MIDDLE',
+            2: 'OLD'
+        }
+
+        result_dict = {
+            'mask': {
+                'pred': mask_id2label[pred_decoded_labels[0]],
+                'gt': mask_id2label[gt_decoded_labels[0]],
+                'result': True if pred_decoded_labels[0] == gt_decoded_labels[0] else False
+            },
+            'gender': {
+                'pred': gender_id2label[pred_decoded_labels[1]],
+                'gt': gender_id2label[gt_decoded_labels[1]],
+                'result': True if pred_decoded_labels[1] == gt_decoded_labels[1] else False
+            },
+            'age': {
+                'pred': age_id2label[pred_decoded_labels[2]],
+                'gt': age_id2label[gt_decoded_labels[2]],
+                'result': True if pred_decoded_labels[2] == gt_decoded_labels[2] else False
+            }
+        }
+
+        if test_table != None:
+            test_table.add_data(wandb.Image(image),
+                                result_dict['mask']['pred'],
+                                result_dict['mask']['gt'],
+                                result_dict['mask']['result'],
+                                result_dict['gender']['pred'],
+                                result_dict['gender']['gt'],
+                                result_dict['gender']['result'],
+                                result_dict['age']['pred'],
+                                result_dict['age']['gt'],
+                                result_dict['age']['result'],
+                                )
+    # ---- wandb table add end -----
     return figure
 
 
@@ -155,6 +200,19 @@ def train(data_dir, model_dir, args):
         json.dump(vars(args), f, ensure_ascii=False, indent=4)
 
     wandb.watch(model, criterion, log='all', log_freq=10)  #wandb add
+    # ----- wandb table add -----
+    test_table = wandb.Table(columns=['image',
+                                      'mask_guess',
+                                      'mask_truth',
+                                      'mask_result',
+                                      'gender_guess',
+                                      'gender_truth',
+                                      'gender_result',
+                                      'age_guess',
+                                      'age_truth',
+                                      'age_result',
+                                      ])
+
 
     best_val_acc = 0
     best_val_loss = np.inf
@@ -221,7 +279,7 @@ def train(data_dir, model_dir, args):
                     inputs_np = torch.clone(inputs).detach().cpu().permute(0, 2, 3, 1).numpy()
                     inputs_np = dataset_module.denormalize_image(inputs_np, dataset.mean, dataset.std)
                     figure = grid_image(
-                        inputs_np, labels, preds, n=16, shuffle=args.dataset != "MaskSplitByProfileDataset"
+                        inputs_np, labels, preds, test_table, n=16, shuffle=args.dataset != "MaskSplitByProfileDataset"  # wandb table add "test_table"
                     )
 
             val_loss = np.sum(val_loss_items) / len(val_loader)
@@ -232,7 +290,7 @@ def train(data_dir, model_dir, args):
                 torch.save(model.module.state_dict(), f"{save_dir}/best.pth")
                 best_val_acc = val_acc
 
-                wandb.save('best.pth')
+                # wandb.save('best.pth')
 
             torch.save(model.module.state_dict(), f"{save_dir}/last.pth")
             print(
@@ -244,8 +302,9 @@ def train(data_dir, model_dir, args):
             logger.add_figure("results", figure, epoch)
             print()
 
-            wandb.log({"valid": {"acc": val_loss, "loss": val_loss }}) # wandb.add
+            wandb.log({"valid": {"acc": val_acc, "loss": val_loss }}) # wandb.add
 
+    wandb.log({'valid_prediction': test_table})
     wandb.finish()
 
 
