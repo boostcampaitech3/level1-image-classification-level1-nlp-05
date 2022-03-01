@@ -312,9 +312,9 @@ class MaskSplitByProfileDataset(MaskBaseDataset):
         subset_idx = self.indices['train']
 
         if self.task == 'multiclass':
-            ### START ###
+            ### NO_FILE START ###
             target = [self.encode_multi_class(self.mask_labels[i], self.gender_labels[i], self.age_labels[i]) for i in subset_idx]
-            ### END ###
+            ### NO_FILE END ###
         elif self.task == 'mask':
             target = [self.mask_labels[i] for i in subset_idx]
         elif self.task == 'gender':
