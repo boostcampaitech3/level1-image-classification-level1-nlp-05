@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 import torch
 from PIL import Image
-import face_recognition
+# import face_recognition
 import cv2
 from torch.utils.data import Dataset, Subset, random_split
 from torchvision import transforms
@@ -28,7 +28,7 @@ class BaseAugmentation:
     def __init__(self, resize, mean, std, **args):
         self.transform = transforms.Compose([
             CenterCrop((380,380)),
-            # Resize(resize, Image.BILINEAR),
+            Resize(resize, Image.BILINEAR),
             ToTensor(),
             Normalize(mean=mean, std=std),
         ])
