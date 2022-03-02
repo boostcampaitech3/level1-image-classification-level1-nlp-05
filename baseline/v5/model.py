@@ -2,10 +2,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
-import efficientnet
+import efficientnet # torch 버전 1.7 local file import
 import math
 from timm.models import vision_transformer
 
+# torch v 1.10
+# efficientnet = torchvision.models.efficientnet
 
 class BaseModel(nn.Module):
     def __init__(self, num_classes):
