@@ -1,0 +1,2 @@
+--epochs 10 --batch_size 32 --model EfficientNetB3 --optimizer AdamW --lr 0.006 --name enetb3_v3 --augmentation CustomAugmentation --lr_decay_step 50 --log_interval 50 --criterion label_smoothing
+--epochs 20 --resize 380 380 --batch_size 32 --model EfficientNetB4 --optimizer AdamW --lr 0.006 --name enetb4_v3 --augmentation CustomAugmentation --lr_decay_step 50 --log_interval 50 --criterion label_smoothing
