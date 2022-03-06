@@ -435,6 +435,7 @@ def train(data_dir, model_dir, args):
                 print()
 
             wandb.log({"valid": {"acc": val_acc, "loss": val_loss }, "figure":figure}) # wandb.add
+    wandb.log({"valid_prediction": test_table})
     wandb.finish()
 
 
