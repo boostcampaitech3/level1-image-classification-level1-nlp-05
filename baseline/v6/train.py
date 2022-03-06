@@ -414,7 +414,7 @@ def train(data_dir, model_dir, args):
                         inputs_np = torch.clone(inputs).detach().cpu().permute(0, 2, 3, 1).numpy()
                         inputs_np = dataset_module.denormalize_image(inputs_np, dataset.mean, dataset.std)
                         figure = grid_image(
-                            inputs_np, labels, preds, n=16, shuffle=args.dataset != "MaskSplitByProfileDataset"
+                            inputs_np, labels, preds, test_table, n=16, shuffle=args.dataset != "MaskSplitByProfileDataset"
                         )
 
                 val_loss = np.sum(val_loss_items) / len(val_loader)
