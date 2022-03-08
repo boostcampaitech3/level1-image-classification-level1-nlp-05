@@ -117,6 +117,35 @@ class Age(int, Enum):
             raise ValueError(f"Age value should be numeric, {value}")
         return value
 
+class Age6Labels(int, Enum):
+    TEENAGERS = 0
+    TWENTIES = 1 
+    THIRTIES = 2
+    FOURTIES = 3
+    FIFTIES = 4
+    SIXTIES = 5
+
+    @classmethod
+    def from_number(cls, value: str) -> int:
+        try:
+            value = int(value)
+        except Exception:
+            raise ValueError(f"Age value should be numeric, {value}")
+
+        if value < 20:
+            return cls.TEENAGERS
+        elif value < 30:
+            return cls.TWENTIES
+        elif value < 40:
+            return cls.THIRTIES
+        elif value < 50:
+            return cls.FOURTIES
+        elif value < 60:
+            return cls.FIFTIES
+        else:
+            return cls.SIXTIES
+
+
 class MaskBaseDataset(Dataset):
     # num_classes = 3 * 2 * 3
 
@@ -135,12 +164,15 @@ class MaskBaseDataset(Dataset):
     gender_labels = []
     age_labels = []
     age_regression = []
+    age6_labels = []
 
     def __init__(self, data_dir, task = 'multiclass', mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225), val_ratio=0.2):
         if task == 'multiclass':
             self.num_classes = 3 * 2 * 3
         elif task == 'mask' or task == 'age':
             self.num_classes = 3
+        elif task == 'age6':
+            self.num_classes = 6
         else:
             self.num_classes = 2
         self.data_dir = data_dir
@@ -173,12 +205,14 @@ class MaskBaseDataset(Dataset):
                 gender_label = GenderLabels.from_str(gender)
                 age_label = AgeLabels.from_number(age)
                 age = Age.from_number(age)
+                age6_label = Age6Labels.from_number(age)
 
                 self.image_paths.append(img_path)
                 self.mask_labels.append(mask_label)
                 self.gender_labels.append(gender_label)
                 self.age_labels.append(age_label)
                 self.age_regression.append(age)
+                self.age6_labels.append(age6_label)
 
     def calc_statistics(self):
         has_statistics = self.mean is not None and self.std is not None
@@ -205,6 +239,7 @@ class MaskBaseDataset(Dataset):
         gender_label = self.get_gender_label(index)
         age_label = self.get_age_label(index)
         age = self.get_age_regression(index)
+        age6_label = self.get_age6_label(index)
         multi_class_label = self.encode_multi_class(mask_label, gender_label, age_label)
 
         image_transform = self.transform(image)
@@ -217,6 +252,8 @@ class MaskBaseDataset(Dataset):
         else:
             if self.task == 'age':
                 return image_transform, age_label
+            elif self.task == 'age6':
+                return image_transform, age6_label
             else:
                 return image_transform, age
 
@@ -235,12 +272,24 @@ class MaskBaseDataset(Dataset):
     def get_age_regression(self, index) -> int:
         return self.age_regression[index]
 
+    def get_age6_label(self, index) -> Age6Labels:
+        return self.age6_labels[index]
+
     def read_image(self, index):
         return Image.open(self.image_paths[index])
 
     @staticmethod
     def encode_multi_class(mask_label, gender_label, age_label) -> int:
         return mask_label * 6 + gender_label * 3 + age_label
+
+    @staticmethod
+    def encode_age_class(age6_label) -> int:
+        if age6_label < 2:
+            return 0
+        elif age6_label < 5:
+            return 1
+        else:
+            return 2
 
     @staticmethod
     def decode_multi_class(multi_class_label) -> Tuple[MaskLabels, GenderLabels, AgeLabels]:
@@ -317,12 +366,14 @@ class MaskSplitByProfileDataset(MaskBaseDataset):
                     gender_label = GenderLabels.from_str(gender)
                     age_label = AgeLabels.from_number(age)
                     age = Age.from_number(age)
+                    age6_label = Age6Labels.from_number(age)
 
                     self.image_paths.append(img_path)
                     self.mask_labels.append(mask_label)
                     self.gender_labels.append(gender_label)
                     self.age_labels.append(age_label)
                     self.age_regression.append(age)
+                    self.age6_labels.append(age6_label)
 
                     self.indices[phase].append(cnt)
                     cnt += 1
@@ -340,6 +391,8 @@ class MaskSplitByProfileDataset(MaskBaseDataset):
             target = [self.mask_labels[i] for i in subset_idx]
         elif self.task == 'gender':
             target = [self.gender_labels[i] for i in subset_idx]
+        elif self.task == 'age6':
+            target = [self.age6_labels[i] for i in subset_idx]
         else:
             target = [self.age_labels[i] for i in subset_idx]
         

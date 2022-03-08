@@ -84,6 +84,15 @@ def grid_image(np_images, gts, preds, test_table, n=16, shuffle=False):
                     0: 'MALE',
                     1: 'FEMALE'
                 }
+            elif task == 'age6':
+                result = {
+                    0: 'YOUNG',
+                    1: 'YOUNG',
+                    2: 'MIDDLE',
+                    3: 'MIDDLE',
+                    4: 'MIDDLE',
+                    5: 'OLD'
+                }
             else:
                 result = {
                     0: 'YOUNG',
@@ -396,6 +405,7 @@ def train(data_dir, model_dir, args):
                 model.eval()
                 val_loss_items = []
                 val_acc_items = []
+                val_acc_age_items = []
                 figure = None
                 for val_batch in val_loader:
                     inputs, labels = val_batch
@@ -409,6 +419,12 @@ def train(data_dir, model_dir, args):
                     acc_item = (labels == preds).sum().item()
                     val_loss_items.append(loss_item)
                     val_acc_items.append(acc_item)
+                    if args.task == 'age6':
+                        acc_cnt = 0
+                        for i in range(len(labels)):
+                            if MaskBaseDataset.encode_age_class(labels[i]) == MaskBaseDataset.encode_age_class(preds[i]):
+                                acc_cnt += 1
+                        val_acc_age_items.append(acc_cnt)
 
                     if figure is None:
                         inputs_np = torch.clone(inputs).detach().cpu().permute(0, 2, 3, 1).numpy()
@@ -419,18 +435,32 @@ def train(data_dir, model_dir, args):
 
                 val_loss = np.sum(val_loss_items) / len(val_loader)
                 val_acc = np.sum(val_acc_items) / len(val_set)
+                if args.task == 'age6':
+                    val_acc_age = np.sum(val_acc_age_items) / len(val_set)
                 best_val_loss = min(best_val_loss, val_loss)
                 if val_acc > best_val_acc:
                     print(f"New best model for val accuracy : {val_acc:4.2%}! saving the best model..")
                     torch.save(model.module.state_dict(), f"{save_dir}/best.pth")
                     best_val_acc = val_acc
+                if args.task == 'age6':
+                    if val_acc_age > best_val_acc_age:
+                        print(f"New best model for val age accuracy : {val_acc_age:4.2%}! saving the best model..")
+                        torch.save(model.module.state_dict(), f"{save_dir}/best.pth")
+                        best_val_acc_age = val_acc_age
                 torch.save(model.module.state_dict(), f"{save_dir}/last.pth")
                 print(
                     f"[Val] acc : {val_acc:4.2%}, loss: {val_loss:4.2} || "
                     f"best acc : {best_val_acc:4.2%}, best loss: {best_val_loss:4.2}"
                 )
+                if args.task == 'age6':
+                    print(
+                        f"[Val_age] acc_age : {val_acc_age:4.2%} || "
+                        f"best acc_age : {best_val_acc_age:4.2%}"
+                    )
                 logger.add_scalar("Val/loss", val_loss, epoch)
                 logger.add_scalar("Val/accuracy", val_acc, epoch)
+                if args.task == 'age6':
+                    logger.add_scalar("Val/accuracy_age", val_acc_age, epoch)
                 logger.add_figure("results", figure, epoch)
                 print()
 
@@ -447,7 +477,7 @@ if __name__ == '__main__':
     load_dotenv(verbose=True)
 
     # Data and model checkpoints directories
-    parser.add_argument('--task', type=str, default='multiclass', help='choose 1 task in (multiclass(default), mask, gender, agem age_regression)')
+    parser.add_argument('--task', type=str, default='multiclass', help='choose 1 task in (multiclass(default), mask, gender, age, age_regression, age6)')
     parser.add_argument('--seed', type=int, default=42, help='random seed (default: 42)')
     parser.add_argument('--epochs', type=int, default=1, help='number of epochs to train (default: 1)')
     parser.add_argument('--dataset', type=str, default='MaskSplitByProfileDataset', help='dataset augmentation type (default: )')
