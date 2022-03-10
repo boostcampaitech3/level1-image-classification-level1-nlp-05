@@ -6,10 +6,7 @@
 
 - Wrap-up Report
     
-    [이미지 분류_NLP_팀 리포트(05조).pdf]([이미지_분류_NLP_팀_리포트(05조).pdf](
-https://github.com/NLP05/mask-classification/issues/1)
-)
-    
+[이미지_분류_NLP_팀_리포트(05조).pdf](https://github.com/NLP05/mask-classification/files/8219677/_._NLP_._.05.pdf)   
 
 ## Members
 
@@ -37,14 +34,13 @@ COVID-19의 전파를 차단하기 위해 코와 입을 완전히 가려 올바�
 
 - **3-Headed Model**
     
-    ![model_structure.png](![model_structure](https://github.com/NLP05/mask-classification/issues/1#issuecomment-1063579988)
-)
+    ![model_structure](https://user-images.githubusercontent.com/59854630/157574345-897f0a24-5eff-4ff4-b0d6-f05a25815c1b.png)
+
     
 
 - **Ensemble Model**
     
-    ![Ensemble Soft voting.jpg](![Ensemble_Soft_voting](https://github.com/NLP05/mask-classification/issues/1#issuecomment-1063579924)
-)
+    ![Ensemble_Soft_voting](https://user-images.githubusercontent.com/59854630/157574257-a6caf7aa-bc2d-49a4-bdb7-198404537bec.jpg)
     
 
 ## 데이터셋 구조
@@ -77,16 +73,14 @@ COVID-19의 전파를 차단하기 위해 코와 입을 완전히 가려 올바�
 
 ### 리더보드 (대회 진행)
 
-![Untitled](<img width="1086" alt="Untitled" src="https://github.com/NLP05/mask-classification/issues/1#issuecomment-1063580125">
-)
+<img width="1086" alt="Untitled" src="https://user-images.githubusercontent.com/59854630/157574383-8987cf91-236d-4c85-8362-70a71d8edf8b.png">
 
 - f1_score: 0.7459
 - accuracy: 78.5714
 
 ### 리더보드 (최종)
 
-![Untitled](<img width="1089" alt="Untitled 1" src="https://github.com/NLP05/mask-classification/issues/1#issuecomment-1063580059">
-)
+<img width="1089" alt="Untitled 1" src="https://user-images.githubusercontent.com/59854630/157574366-1f97de46-a81c-4dcf-9e3c-8461ffa7e6c8.png">
 
 - f1_score: 0.7301
 - accuracy: 78.0794
