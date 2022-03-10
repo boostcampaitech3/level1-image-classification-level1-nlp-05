@@ -6,7 +6,7 @@
 
 - Wrap-up Report
     
-[이미지_분류_NLP_팀_리포트(05조).pdf](https://github.com/NLP05/mask-classification/files/8219677/_._NLP_._.05.pdf)   
+[이미지_분류_NLP_팀_리포트(05조)](https://github.com/NLP05/mask-classification/files/8219677/_._NLP_._.05.pdf)   
 
 ## Members
 
