@@ -13,11 +13,11 @@
 | 이름 | Github Profile | 역할 |
 | --- | --- | --- |
 | 공통 |  | EDA |
-| 강나경 | angieKang | 모델 구조 잡기, 모델 성능 시각화 |
-| 김산 | nasmik419 | age regression 관련 모델 조사, data augmentation |
-| 김현지 | TB2715 | wandb 도입, 실험 환경 설정, age regression/classification |
-| 정민지 | minji2744 | 모델 학습, 하이퍼파라미터 튜닝, 앙상블 |
-| 최지연 | jeeyeon51 | 적용가능한 다양한 모델 조사, 3-headed 모델 학습 |
+| 강나경 | [angieKang](https://github.com/angieKang) | 모델 구조 잡기, 모델 성능 시각화 |
+| 김산 | [nasmik419](https://github.com/mounKim) | age regression 관련 모델 조사, data augmentation |
+| 김현지 | [TB2715](https://github.com/TB2715) | wandb 도입, 실험 환경 설정, age regression/classification |
+| 정민지 | [minji2744](https://github.com/minji2744) | 모델 학습, 하이퍼파라미터 튜닝, 앙상블 |
+| 최지연 | [jeeyeon51](https://github.com/jeeyeon51) | 적용가능한 다양한 모델 조사, 3-headed 모델 학습 |
 
 ## 문제 개요
 
