@@ -128,7 +128,10 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+<<<<<<< HEAD
 ## MAC
+=======
+>>>>>>> a396ba9 (upload mac ignore setting to .gitignore)
 # General
 .DS_Store
 .AppleDouble
