@@ -117,7 +117,7 @@ pip install wandb
 
 ### 2. 코드 실행 방법
 
-1. 먼저 위의 [requirements](## Requirements) 참고해 환경설정을 진행합니다.
+1. 먼저 위의 [requirements](## requirements) 참고해 환경설정을 진행합니다.
 2. 모델 훈련
     1. `python3 train.py -epochs 10 --batch_size 32 --resize 300 300 --model EfficientNetB3 --optimizer AdamW --lr 0.0001 --name AdamW_gender_eb3 --augmentation CustomAugmentation --lr_decay_step 50 --log_interval 50 --criterion label_smoothing --lr_scheduler CosineAnnealing` 로 모델을 훈련하거나,
     2. `./run_train.sh` 명령어를 통해 `command_file.txt`에 정의해둔 하이퍼 파라미터 옵션을 수정한 모델들을 학습할 수 있습니다. 
