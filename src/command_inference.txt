@@ -1,0 +1,5 @@
+--model EfficientNetB0 --model_dir ./model/enetb0 --resize 224 224
+--model EfficientNetB1 --model_dir ./model/enetb1 --resize 240 240
+--model EfficientNetB2 --model_dir ./model/enetb2 --resize 260 260
+--model EfficientNetB3 --model_dir ./model/enetb3 --resize 300 300
+--model EfficientNetB4 --model_dir ./model/enetb4
