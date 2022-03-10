@@ -1,7 +1,3 @@
-# README.md
-
-Tags: Processing
-
 # Boostcamp AI Tech 3기: NLP-05-외않되조
 
 ---
@@ -10,13 +6,12 @@ Tags: Processing
 
 - Wrap-up Report
     
-    [이미지 분류_NLP_팀 리포트(05조).pdf]([이미지_분류_NLP_팀_리포트(05조).pdf](https://github.com/NLP05/mask-classification/files/8219660/_._NLP_._.05.pdf)
+    [이미지 분류_NLP_팀 리포트(05조).pdf]([이미지_분류_NLP_팀_리포트(05조).pdf](
+https://github.com/NLP05/mask-classification/issues/1)
 )
     
 
 ## Members
-
----
 
 | 이름 | Github Profile | 역할 |
 | --- | --- | --- |
@@ -29,8 +24,6 @@ Tags: Processing
 
 ## 문제 개요
 
----
-
 COVID-19의 전파를 차단하기 위해 코와 입을 완전히 가려 올바르게 마스크를 착용해야 합니다.
 
 넓은 공공장소에서 카메라로 비춰진 사람의 얼굴 이미지만으로 올바른 마스크 착용 유무를 자동으로 판단할 수 있다면 적은 인적자원으로도 충분히 마스크 착용 상태 검사가 가능할 것입니다.
@@ -42,23 +35,19 @@ COVID-19의 전파를 차단하기 위해 코와 입을 완전히 가려 올바�
 
 ## 모델 구조
 
----
-
 - **3-Headed Model**
     
-    ![model_structure.png](![model_structure](https://user-images.githubusercontent.com/59854630/157573644-028d335b-d8bc-475f-ba04-ab4f4f4fbdba.png)
+    ![model_structure.png](![model_structure](https://github.com/NLP05/mask-classification/issues/1#issuecomment-1063579988)
 )
     
 
 - **Ensemble Model**
     
-    ![Ensemble Soft voting.jpg](![Ensemble_Soft_voting](https://user-images.githubusercontent.com/59854630/157573670-e2e5dfd0-2b98-4424-8bbe-952eb03c45f2.jpg)
+    ![Ensemble Soft voting.jpg](![Ensemble_Soft_voting](https://github.com/NLP05/mask-classification/issues/1#issuecomment-1063579924)
 )
     
 
 ## 데이터셋 구조
-
----
 
 - 마스크 착용여부, 성별, 나이를 기준으로 총 18개의 클래스가 있습니다.
     
@@ -86,11 +75,9 @@ COVID-19의 전파를 차단하기 위해 코와 입을 완전히 가려 올바�
 
 ## 실험 결과
 
----
-
 ### 리더보드 (대회 진행)
 
-![Untitled](<img width="1086" alt="Untitled" src="https://user-images.githubusercontent.com/59854630/157573738-b95159e2-e9cc-471e-a7f0-ef734143de95.png">
+![Untitled](<img width="1086" alt="Untitled" src="https://github.com/NLP05/mask-classification/issues/1#issuecomment-1063580125">
 )
 
 - f1_score: 0.7459
@@ -98,15 +85,13 @@ COVID-19의 전파를 차단하기 위해 코와 입을 완전히 가려 올바�
 
 ### 리더보드 (최종)
 
-![Untitled](<img width="1089" alt="Untitled 1" src="https://user-images.githubusercontent.com/59854630/157573749-c15bbcf4-2579-4f82-bc92-46272ee76b46.png">
+![Untitled](<img width="1089" alt="Untitled 1" src="https://github.com/NLP05/mask-classification/issues/1#issuecomment-1063580059">
 )
 
 - f1_score: 0.7301
 - accuracy: 78.0794
 
 ## Requirements
-
----
 
 > Confirmed that it runs on Ubuntu 18.04.5, Python  3.8, and pytorch 1.10.2
 > 
@@ -126,8 +111,6 @@ pip install wandb
 ```
 
 ## Getting Started
-
----
 
 ### 1. 코드 구조
 
